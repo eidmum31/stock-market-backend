@@ -5,6 +5,7 @@ from sqlalchemy import create_engine, Column, Integer, String, Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 from typing import List
+from fastapi.middleware.cors import CORSMiddleware
 
 
 # Postgresql Database configuration which is hosted in neon
@@ -66,6 +67,14 @@ def get_db():
 
 # Initialize FastAPI app
 app = FastAPI()
+# Add CORS Middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins (React frontend, etc.)
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all HTTP methods (GET, POST, PUT, DELETE, etc.)
+    allow_headers=["*"],  # Allows all headers (Authorization, Content-Type, etc.)
+)
 
 @app.get("/")
 def welcome():
@@ -76,10 +85,10 @@ def welcome():
 @app.get("/stocks", response_model=List[StockResponse])
 def read_stocks(skip: int = 0,  db: Session = Depends(get_db)):
 
-    stocks = db.query(Stock).offset(skip).limit(1000).all()  #limit the entries as it is large and i use a free deploy server
+    stocks = db.query(Stock).offset(skip).all()  #limit the entries as it is large and i use a free deploy server
     return stocks
 
-# Post a new stock
+# Post a new stockS
 @app.post("/stocks", response_model=StockResponse)
 def create_stock(stock: StockCreate, db: Session = Depends(get_db)):
 
