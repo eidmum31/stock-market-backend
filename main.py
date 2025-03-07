@@ -76,7 +76,7 @@ def welcome():
 @app.get("/stocks", response_model=List[StockResponse])
 def read_stocks(skip: int = 0,  db: Session = Depends(get_db)):
 
-    stocks = db.query(Stock).offset(skip).limit(5000).all()  #limit the entries as it is large and i use a free deploy server
+    stocks = db.query(Stock).offset(skip).limit(1000).all()  #limit the entries as it is large and i use a free deploy server
     return stocks
 
 # Post a new stock
