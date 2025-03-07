@@ -106,3 +106,14 @@ def update_stock(stock_id: int, stock: StockCreate, db: Session = Depends(get_db
     db.commit()
     db.refresh(db_stock)
     return db_stock
+
+
+# Delete a entry
+@app.delete("/stocks/{stock_id}")
+def delete_stock(stock_id: int, db: Session = Depends(get_db)):
+    db_stock = db.query(Stock).filter(Stock.id == stock_id).first()
+    if db_stock is None:
+        raise HTTPException(status_code=404, detail="Stock not found")
+    db.delete(db_stock)
+    db.commit()
+    return {"message": "Stock deleted"}
