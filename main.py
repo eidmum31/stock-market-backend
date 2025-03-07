@@ -117,3 +117,11 @@ def delete_stock(stock_id: int, db: Session = Depends(get_db)):
     db.delete(db_stock)
     db.commit()
     return {"message": "Stock deleted"}
+
+# Get by a id
+@app.get("/stocks/{stock_id}", response_model=StockResponse)
+def get_stock_by_id(stock_id: int, db: Session = Depends(get_db)):
+    db_stock = db.query(Stock).filter(Stock.id == stock_id).first()
+    if db_stock is None:
+        raise HTTPException(status_code=404, detail="Stock not found")
+    return db_stock
