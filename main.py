@@ -78,3 +78,13 @@ def read_stocks(skip: int = 0, db: Session = Depends(get_db)):
 
     stocks = db.query(Stock).offset(skip).all()
     return stocks
+
+# Post a new stock
+@app.post("/stocks", response_model=StockResponse)
+def create_stock(stock: StockCreate, db: Session = Depends(get_db)):
+
+    db_stock = Stock(date=stock.date, trade_code=stock.trade_code, high=stock.high, low=stock.low, open=stock.open, close= stock.close, volume=stock.volume)
+    db.add(db_stock)
+    db.commit()
+    db.refresh(db_stock)
+    return db_stock
