@@ -88,3 +88,21 @@ def create_stock(stock: StockCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_stock)
     return db_stock
+
+
+# Update a new stock
+@app.put("/stocks/{stock_id}", response_model=StockResponse)
+def update_stock(stock_id: int, stock: StockCreate, db: Session = Depends(get_db)):
+    db_stock = db.query(Stock).filter(Stock.id == stock_id).first()
+    if db_stock is None:
+        raise HTTPException(status_code=404, detail="Stock not found")
+    db_stock.date = stock.date
+    db_stock.trade_code = stock.trade_code
+    db_stock.high = stock.high
+    db_stock.low = stock.low
+    db_stock.open = stock.open
+    db_stock.close = stock.close
+    db_stock.volume = stock.volume
+    db.commit()
+    db.refresh(db_stock)
+    return db_stock
